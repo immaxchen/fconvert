@@ -1,57 +1,63 @@
 #!/bin/bash
 
-if [ $# -eq 1 ] && [ $1 = '-F' -o $1 = '-f' ]
+OPTION_A="-F"
+OPTION_B="-f"
+
+NAME_A="f90"
+NAME_B="F90"
+
+if [ $# -eq 1 ] && [ $1 = $OPTION_A -o $1 = $OPTION_B ]
 then
-  mode=$1
+  MODE=$1
 else
-  numA=`ls *.f90 2> /dev/null | wc -w`
-  numB=`ls *.F90 2> /dev/null | wc -w`
-  if [ $numA -ge $numB ]
+  COUNT_A=`ls *.$NAME_A 2> /dev/null | wc -w`
+  COUNT_B=`ls *.$NAME_B 2> /dev/null | wc -w`
+  if [ $COUNT_A -ge $COUNT_B ]
   then
-    mode='-F'
+    MODE=$OPTION_A
   else
-    mode='-f'
+    MODE=$OPTION_B
   fi
 fi
 
-if [ $mode = '-F' ]
+if [ $MODE = $OPTION_A ]
 then
 
-  numfiles=`ls *.f90 2> /dev/null | wc -w`
-  if [ $numfiles -eq 0 ]
+  N_FILES=`ls *.$NAME_A 2> /dev/null | wc -w`
+  if [ $N_FILES -eq 0 ]
   then
-    echo No f90 file detected.
+    echo No $NAME_A file detected.
     exit 2
   fi
 
-  n=0
-  for file in *.f90
+  N=0
+  for FILE in *.$NAME_A
   do
-    n=`expr $n + 1`
-    newfile=`echo $file | tr '.f90' '.F90'`
-    mv $file $newfile
-    echo $file '=>' $newfile
+    N=`expr $N + 1`
+    NEWFILE=`echo $FILE | tr ".$NAME_A" ".$NAME_B"`
+    mv $FILE $NEWFILE
+    echo $FILE '=>' $NEWFILE
   done
-  echo $n files converted.
+  echo $N files converted.
 
-elif [ $mode = '-f' ]
+elif [ $MODE = $OPTION_B ]
 then
 
-  numfiles=`ls *.F90 2> /dev/null | wc -w`
-  if [ $numfiles -eq 0 ]
+  N_FILES=`ls *.$NAME_B 2> /dev/null | wc -w`
+  if [ $N_FILES -eq 0 ]
   then
-    echo No F90 file detected.
+    echo No $NAME_B file detected.
     exit 2
   fi
 
-  n=0
-  for file in *.F90
+  N=0
+  for FILE in *.$NAME_B
   do
-    n=`expr $n + 1`
-    newfile=`echo $file | tr '.F90' '.f90'`
-    mv $file $newfile
-    echo $file '=>' $newfile
+    N=`expr $N + 1`
+    NEWFILE=`echo $FILE | tr ".$NAME_B" ".$NAME_A"`
+    mv $FILE $NEWFILE
+    echo $FILE '=>' $NEWFILE
   done
-  echo $n files converted.
+  echo $N files converted.
 
 fi
